@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "tempfile"
 require_relative "../spec_helper"
 require "policy_ocr/file_parser"
 
@@ -59,6 +60,36 @@ RSpec.describe PolicyOcr::FileParser do
 
       expect(result[0, 10]).to eq(valid_numbers)
       expect(result[10, 10]).to eq(invalid_numbers)
+    end
+
+    it "strips UTF-8 BOM from file start" do
+      content = "\uFEFF" + fixture("single_entry_zeros")
+      tmp = Tempfile.new(["bom", ".txt"])
+      tmp.write(content)
+      tmp.close
+      result = described_class.parse_file(tmp.path)
+      expect(result).to eq(["000000000"])
+      tmp.unlink
+    end
+
+    it "handles Windows line endings (\\r\\n)" do
+      content = fixture("single_entry_zeros").gsub("\n", "\r\n")
+      tmp = Tempfile.new(["crlf", ".txt"])
+      tmp.write(content)
+      tmp.close
+      result = described_class.parse_file(tmp.path)
+      expect(result).to eq(["000000000"])
+      tmp.unlink
+    end
+
+    it "skips phantom entries from trailing blank lines" do
+      content = fixture("single_entry_zeros") + "\n\n\n\n"
+      tmp = Tempfile.new(["trailing", ".txt"])
+      tmp.write(content)
+      tmp.close
+      result = described_class.parse_file(tmp.path)
+      expect(result).to eq(["000000000"])
+      tmp.unlink
     end
   end
 end

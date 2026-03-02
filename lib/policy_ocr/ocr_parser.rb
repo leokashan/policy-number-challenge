@@ -10,12 +10,13 @@ module PolicyOcr
     CHARS_PER_DIGIT = 3
     EXPECTED_LINE_LENGTH = DIGITS_PER_LINE * CHARS_PER_DIGIT # 27
 
-    # @param lines [Array<String>] exactly 3 lines, each 27 characters
+    # @param lines [Array<String>] exactly 3 lines, each 27 characters (longer lines truncated)
     # @return [String] 9-character string of digits and/or "?"
     def self.parse_entry(lines)
       return "?" * DIGITS_PER_LINE if lines.nil? || lines.size != 3
       return "?" * DIGITS_PER_LINE if lines.any? { |l| l.nil? || l.length < EXPECTED_LINE_LENGTH }
 
+      lines = lines.map { |l| l[0, EXPECTED_LINE_LENGTH] }
       (0...DIGITS_PER_LINE).map do |i|
         col_start = i * CHARS_PER_DIGIT
         rows = lines.map { |line| extract_slice(line, col_start) }

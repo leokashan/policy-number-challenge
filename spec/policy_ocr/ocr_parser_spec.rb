@@ -32,5 +32,14 @@ RSpec.describe PolicyOcr::OcrParser do
     it "returns ???????? for nil input" do
       expect(described_class.parse_entry(nil)).to eq("?????????")
     end
+
+    it "truncates lines longer than 27 chars to first 27" do
+      lines = [
+        " _  _  _  _  _  _  _  _  _ X",
+        "| || || || || || || || || |X",
+        "|_||_||_||_||_||_||_||_||_|X"
+      ]
+      expect(described_class.parse_entry(lines)).to eq("000000000")
+    end
   end
 end

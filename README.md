@@ -55,6 +55,13 @@ Parses the input file, validates each number, and writes output with status:
 
 Each entry is 4 lines: 3 data lines (27 characters each) + 1 blank line. Digits are 3×3 grids of pipes (`|`) and underscores (`_`).
 
+## Assumptions & Edge Cases
+
+- **Encoding:** Files are read as UTF-8. A leading BOM is stripped.
+- **Line endings:** Both Unix (`\n`) and Windows (`\r\n`) line endings are supported.
+- **Line length:** Lines longer than 27 characters are truncated to the first 27.
+- **Trailing blanks:** Extra blank lines at the end of the file do not produce phantom entries.
+
 ## Checksum
 
 Valid policy numbers satisfy: `(d1 + 2*d2 + ... + 9*d9) mod 11 == 0`, where `d1` is the rightmost digit and `d9` is the leftmost.
