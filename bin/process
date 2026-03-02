@@ -14,4 +14,10 @@ end
 
 input_path, output_path = ARGV
 PolicyOcr.process_file(input_path, output_path)
-puts "Wrote #{output_path}"
+
+content = File.read(output_path)
+lines = content.strip.split("\n")
+puts "Wrote #{lines.size} policy number(s) to #{output_path}"
+puts
+puts "--- Output ---"
+puts content
