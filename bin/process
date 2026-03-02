@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# CLI: Process an OCR policy file and write output.
+# Usage: ruby bin/process input.txt output.txt
+
+$LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
+require "policy_ocr"
+
+if ARGV.size != 2
+  warn "Usage: ruby bin/process <input.txt> <output.txt>"
+  exit 1
+end
+
+input_path, output_path = ARGV
+PolicyOcr.process_file(input_path, output_path)
+puts "Wrote #{output_path}"
